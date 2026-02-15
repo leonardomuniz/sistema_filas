@@ -1,20 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { CreateProfessorDto } from './dto/create-professor.dto';
-import { UpdateProfessorDto } from './dto/update-professor.dto';
-import { Professor } from './entities/professor.entity';
+import { Injectable } from "@nestjs/common";
+import { UpdateProfessorDto } from "./dto/update-professor.dto";
+import { Professor } from "./entities/professor.entity";
 
 @Injectable()
 export class ProfessorService {
-  create(createProfessorDto: CreateProfessorDto) {
-    return 'This action adds a new professor';
-  }
-
   findAll(): Professor[] {
-    return [new Professor('Bob o bobo', '12345678901')];
+    return [new Professor("Bob o bobo", "12345678901")];
   }
 
   findOne(id: number): Professor | null {
-    const professor = new Professor('Bob o bobo', '12345678901');
+    const professor = new Professor("Bob o bobo", "12345678901");
 
     if (id !== 1) {
       return null;
