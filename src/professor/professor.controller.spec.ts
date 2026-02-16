@@ -1,11 +1,18 @@
+import { jest } from "@jest/globals";
 import { Test, TestingModule } from "@nestjs/testing";
-import { ProfessorController } from "./professor.controller";
-import { ProfessorService } from "./professor.service";
-import { ProfessorCreateUseCase } from "./useCases/professorCreate.useCase";
+
 import { getQueueToken } from "@nestjs/bull";
+import { ProfessorController } from "./professor.controller.js";
+import { ProfessorService } from "./professor.service.js";
+import { ProfessorCreateUseCase } from "./useCases/professorCreate.useCase.js";
+import { PrismaProfessorRepository } from "./repository/prisma-professor.repository.js";
 
 describe("ProfessorController", () => {
   let controller: ProfessorController;
+  const mockProfessorRepository = {
+    create: jest.fn(),
+    findByCpf: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,6 +26,10 @@ describe("ProfessorController", () => {
             add: jest.fn(),
             process: jest.fn(),
           },
+        },
+        {
+          provide: PrismaProfessorRepository,
+          useValue: mockProfessorRepository,
         },
       ],
     }).compile();

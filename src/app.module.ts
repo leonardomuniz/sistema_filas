@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ProfessorModule } from './professor/professor.module';
-import { BullModule } from '@nestjs/bull';
-import { BullConfig } from './config/bullMq';
+import { Module } from "@nestjs/common";
+import { BullModule } from "@nestjs/bull";
+import { PrismaModule } from "./prisma/prisma.module.js";
+import { BullConfig } from "./config/bullMq.js";
+import { AppController } from "./app.controller.js";
+import { AppService } from "./app.service.js";
+import { ProfessorModule } from "./professor/professor.module.js";
 
 @Module({
-  imports: [BullModule.forRoot(BullConfig), ProfessorModule],
+  imports: [BullModule.forRoot(BullConfig), ProfessorModule, PrismaModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,8 +1,8 @@
-import { env } from './env';
+import env from "./env.js";
 
 const { redis } = env;
 
-if (!redis.backoff.type) throw new Error('.env is not complet');
+if (!redis.backoff.type) throw new Error(".env is not complet");
 
 export const BullConfig = {
   redis: redis.url,

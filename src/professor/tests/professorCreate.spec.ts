@@ -1,16 +1,40 @@
+import { jest } from "@jest/globals";
 import { Test, TestingModule } from "@nestjs/testing";
-import { ProfessorCreateUseCase } from "../useCases/professorCreate.useCase";
-import { Professor } from "../entities/professor.entity";
+
 import { getQueueToken } from "@nestjs/bull";
-import { CreateProfessorDto } from "../dto/create-professor.dto";
+
 import { Job } from "bull";
+import { CreateProfessorDto } from "../dto/create-professor.dto.js";
+import { ProfessorCreateUseCase } from "../useCases/professorCreate.useCase.js";
+import { PrismaProfessorRepository } from "../repository/prisma-professor.repository.js";
+import { Professor } from "../entities/professor.entity.js";
+import { ConflictException } from "@nestjs/common";
 
 describe("Professor Create", () => {
   let useCase: ProfessorCreateUseCase;
+
   const mockQueue = {
     add: jest.fn(),
   };
-  const mockProfessor = new Professor("Bob o bobo", "12345678901");
+
+  const mockProfessorDto: CreateProfessorDto = {
+    cpf: "41165900378",
+    name: "Bob o bobo",
+  };
+
+  const mockProfessor = Professor.create(
+    mockProfessorDto.name,
+    mockProfessorDto.cpf,
+  );
+
+  const mockProfessorRepository = {
+    create: jest.fn(),
+    findByCpf: jest.fn(),
+  };
+
+  const mockJob = {
+    data: mockProfessorDto,
+  } as Job<CreateProfessorDto>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,26 +44,47 @@ describe("Professor Create", () => {
           provide: getQueueToken("professors"),
           useValue: mockQueue,
         },
+        {
+          provide: PrismaProfessorRepository,
+          useValue: mockProfessorRepository,
+        },
       ],
     }).compile();
 
     useCase = module.get<ProfessorCreateUseCase>(ProfessorCreateUseCase);
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should add professor to queue", async () => {
-    await useCase.handle(mockProfessor);
+    await useCase.handle(mockProfessorDto);
     expect(mockQueue.add).toHaveBeenCalledWith(
       "professor-create",
-      mockProfessor,
+      mockProfessorDto,
     );
   });
 
-  it("should create professor", () => {
-    const mockJob = {
-      data: mockProfessor,
-    } as Job<CreateProfessorDto>;
+  it("should create professor", async () => {
+    mockProfessorRepository.findByCpf.mockResolvedValue(null);
+    mockProfessorRepository.create.mockResolvedValue(true);
 
-    const result = useCase.process(mockJob);
-    expect(result).toContain("Processado !");
+    await useCase.process(mockProfessorDto);
+    expect(mockProfessorRepository.findByCpf).toHaveBeenCalledWith(
+      mockProfessorDto.cpf,
+    );
+    expect(mockProfessorRepository.create).toHaveBeenCalledWith(
+      expect.any(Professor),
+    );
+  });
+
+  it("should not create professor when CPF is already in use", async () => {
+    mockProfessorRepository.findByCpf.mockResolvedValue(mockProfessor);
+
+    await expect(useCase.process(mockProfessorDto)).rejects.toThrow(
+      ConflictException,
+    );
   });
 });

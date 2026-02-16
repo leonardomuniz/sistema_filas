@@ -1,6 +1,6 @@
-import { Logger } from '@nestjs/common';
+import "dotenv/config";
 
-export const env = {
+const env = {
   database: {
     url: process.env.DATABASE_URL,
   },
@@ -16,4 +16,4 @@ export const env = {
   },
 };
 
-Logger.debug(process.env.REDIS_BACKOFF_DELAY);
+export default env;
