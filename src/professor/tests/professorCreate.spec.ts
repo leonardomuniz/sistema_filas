@@ -68,23 +68,15 @@ describe("Professor Create", () => {
   });
 
   it("should create professor", async () => {
-    mockProfessorRepository.findByCpf.mockResolvedValue(null);
     mockProfessorRepository.create.mockResolvedValue(true);
 
-    await useCase.process(mockProfessorDto);
-    expect(mockProfessorRepository.findByCpf).toHaveBeenCalledWith(
-      mockProfessorDto.cpf,
-    );
-    expect(mockProfessorRepository.create).toHaveBeenCalledWith(
-      expect.any(Professor),
-    );
+    await useCase.process(mockJob);
+    expect(mockProfessorRepository.create).toHaveBeenCalled();
   });
 
   it("should not create professor when CPF is already in use", async () => {
     mockProfessorRepository.findByCpf.mockResolvedValue(mockProfessor);
 
-    await expect(useCase.process(mockProfessorDto)).rejects.toThrow(
-      ConflictException,
-    );
+    await expect(useCase.handle(mockProfessorDto)).rejects.toThrow(ConflictException);
   });
 });

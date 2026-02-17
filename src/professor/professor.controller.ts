@@ -22,13 +22,11 @@ export class ProfessorController {
 
   @Post()
   create(@Body() createProfessorDto: CreateProfessorDto) {
-    Logger.log("chegou aqui porra");
-    return this.professorCreateUseCase.process(createProfessorDto);
+    return this.professorCreateUseCase.handle(createProfessorDto);
   }
 
   @Get()
   findAll() {
-    Logger.log("chegou aqui");
     return this.professorService.findAll();
   }
 

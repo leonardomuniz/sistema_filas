@@ -15,25 +15,37 @@ export class ProfessorCreateUseCase {
     private readonly professorRepository: PrismaProfessorRepository,
   ) {}
 
-  async handle(input: CreateProfessorDto) {
-    await this.queue.add("professor-create", input);
-  }
-
-  @Process("professor-create")
-  async process(input: CreateProfessorDto): Promise<boolean | undefined> {
-    const { cpf, name } = input;
-
-    const isProfessorExists = await this.professorRepository.findByCpf(cpf);
+  async handle(input: CreateProfessorDto): Promise<boolean> {
+    const isProfessorExists = await this.professorRepository.findByCpf(
+      input.cpf,
+    );
     Logger.log("verify if professor already exists");
 
     if (isProfessorExists) {
+      Logger.error("Professor with this CPF already exists");
       throw new ConflictException("Professor with this CPF already exists");
     }
 
-    const professor = Professor.create(name, cpf);
+    Logger.log("Adding professor to queue");
 
-    await this.professorRepository.create(professor);
+    await this.queue.add("professor-create", input);
+    Logger.log(`Professor ${input.name} added successfully`);
 
     return true;
+  }
+
+  @Process("professor-create")
+  async process(input: Job<CreateProfessorDto>): Promise<boolean> {
+    try {
+      const professor = Professor.create(input.data.name, input.data.cpf);
+
+      await this.professorRepository.create(professor);
+
+      return true;
+    } catch (error) {
+      Logger.error(`Error creating professor: ${error}`);
+
+      throw error;
+    }
   }
 }

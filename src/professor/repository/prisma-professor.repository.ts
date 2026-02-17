@@ -8,8 +8,6 @@ export class PrismaProfessorRepository implements ProfessorRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findByCpf(cpf: string): Promise<Professor | null> {
-    Logger.debug(cpf);
-    Logger.debug(this.prisma);
     const professor = (await this.prisma.professor.findUnique({
       where: {
         cpf: cpf,
