@@ -6,8 +6,23 @@ import { Injectable, Logger } from "@nestjs/common";
 @Injectable()
 export class PrismaProfessorRepository implements ProfessorRepository {
   constructor(private readonly prisma: PrismaService) {}
+  async findById(id: string): Promise<Professor | null> {
+    Logger.log(`Find professor by ID ${id}`);
+    const professor = (await this.prisma.professor.findUnique({
+      where: {
+        id: id,
+      },
+    })) as Professor | null;
+
+    if (!professor) {
+      return null;
+    }
+
+    return professor;
+  }
 
   async findByCpf(cpf: string): Promise<Professor | null> {
+    Logger.log(`Find professor by CPF ${cpf}`);
     const professor = (await this.prisma.professor.findUnique({
       where: {
         cpf: cpf,

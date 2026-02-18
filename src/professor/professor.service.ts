@@ -7,15 +7,6 @@ export class ProfessorService {
     return [new Professor("id", "Bob o bobo", "12345678901")];
   }
 
-  findOne(id: number): Professor | null {
-    const professor = new Professor("id", "Bob o bobo", "12345678901");
-
-    if (id !== 1) {
-      return null;
-    }
-    return professor;
-  }
-
   update(id: number, _updateProfessorDto: UpdateProfessorDto) {
     return `This action updates a #${id} professor`;
   }

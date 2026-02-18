@@ -11,12 +11,14 @@ import { CreateProfessorDto } from "./dto/create-professor.dto.js";
 import { UpdateProfessorDto } from "./dto/update-professor.dto.js";
 import { ProfessorService } from "./professor.service.js";
 import { ProfessorCreateUseCase } from "./useCases/professorCreate.useCase.js";
+import { ProfessorFindByIdUseCase } from "./useCases/professorFindById.useCase.js";
 
 @Controller("professor")
 export class ProfessorController {
   constructor(
     private readonly professorService: ProfessorService,
     private readonly professorCreateUseCase: ProfessorCreateUseCase,
+    private readonly professorFindByIdUseCase: ProfessorFindByIdUseCase,
   ) {}
 
   @Post()
@@ -31,7 +33,7 @@ export class ProfessorController {
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.professorService.findOne(+id);
+    return this.professorFindByIdUseCase.run(id);
   }
 
   @Patch(":id")

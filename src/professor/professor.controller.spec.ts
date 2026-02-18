@@ -1,11 +1,11 @@
 import { jest } from "@jest/globals";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { getQueueToken } from "@nestjs/bull";
 import { ProfessorController } from "./professor.controller.js";
 import { ProfessorService } from "./professor.service.js";
 import { ProfessorCreateUseCase } from "./useCases/professorCreate.useCase.js";
 import { PrismaProfessorRepository } from "./repository/prisma-professor.repository.js";
+import { ProfessorFindByIdUseCase } from "./useCases/professorFindById.useCase.js";
 
 describe("ProfessorController", () => {
   let controller: ProfessorController;
@@ -20,13 +20,7 @@ describe("ProfessorController", () => {
       providers: [
         ProfessorService,
         ProfessorCreateUseCase,
-        {
-          provide: getQueueToken("professors"),
-          useValue: {
-            add: jest.fn(),
-            process: jest.fn(),
-          },
-        },
+        ProfessorFindByIdUseCase,
         {
           provide: PrismaProfessorRepository,
           useValue: mockProfessorRepository,

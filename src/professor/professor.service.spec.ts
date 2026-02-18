@@ -15,16 +15,8 @@ describe("ProfessorService", () => {
   });
 
   describe("find services", () => {
-    it("should return a professor", () => {
-      expect(service.findOne(1)).toStrictEqual(mockProfessor);
-    });
-
     it("should return all professor", () => {
       expect(service.findAll()).toStrictEqual([mockProfessor]);
-    });
-
-    it("should not return professor if not found", () => {
-      expect(service.findOne(2)).toBeNull();
     });
   });
 
