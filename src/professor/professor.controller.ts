@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Delete,
-  Logger,
 } from "@nestjs/common";
 import { CreateProfessorDto } from "./dto/create-professor.dto.js";
 import { UpdateProfessorDto } from "./dto/update-professor.dto.js";
@@ -22,7 +21,7 @@ export class ProfessorController {
 
   @Post()
   create(@Body() createProfessorDto: CreateProfessorDto) {
-    return this.professorCreateUseCase.handle(createProfessorDto);
+    return this.professorCreateUseCase.run(createProfessorDto);
   }
 
   @Get()
