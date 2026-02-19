@@ -1,4 +1,5 @@
 import { PrismaService } from "../../prisma/prisma.service.js";
+import { ListProfessorInputDto } from "../dto/list-professor-input.js";
 import { Professor } from "../entities/professor.entity.js";
 import { ProfessorRepository } from "./professor.repository.js";
 import { Injectable, Logger } from "@nestjs/common";
@@ -6,6 +7,27 @@ import { Injectable, Logger } from "@nestjs/common";
 @Injectable()
 export class PrismaProfessorRepository implements ProfessorRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  async list(input: ListProfessorInputDto): Promise<Professor[] | []> {
+    const { page, pageSize } = input;
+
+    const pageNumber = page && page > 0 ? page : 1;
+
+    const limit = pageSize && pageSize > 0 ? pageSize : 10;
+
+    const skip = (pageNumber - 1) * pageSize;
+
+    const list = (await this.prisma.professor.findMany({
+      take: limit,
+      skip,
+      orderBy: {
+        name: "desc",
+      },
+    })) as Professor[] | [];
+
+    return list;
+  }
+
   async findById(id: string): Promise<Professor | null> {
     Logger.log(`Find professor by ID ${id}`);
     const professor = (await this.prisma.professor.findUnique({

@@ -6,6 +6,7 @@ import { ProfessorService } from "./professor.service.js";
 import { ProfessorCreateUseCase } from "./useCases/professorCreate.useCase.js";
 import { PrismaProfessorRepository } from "./repository/prisma-professor.repository.js";
 import { ProfessorFindByIdUseCase } from "./useCases/professorFindById.useCase.js";
+import { ProfessorListUseCase } from "./useCases/professorList.useCase.js";
 
 describe("ProfessorController", () => {
   let controller: ProfessorController;
@@ -21,6 +22,7 @@ describe("ProfessorController", () => {
         ProfessorService,
         ProfessorCreateUseCase,
         ProfessorFindByIdUseCase,
+        ProfessorListUseCase,
         {
           provide: PrismaProfessorRepository,
           useValue: mockProfessorRepository,

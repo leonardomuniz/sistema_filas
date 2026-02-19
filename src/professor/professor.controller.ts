@@ -6,12 +6,14 @@ import {
   Param,
   Patch,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { CreateProfessorDto } from "./dto/create-professor.dto.js";
 import { UpdateProfessorDto } from "./dto/update-professor.dto.js";
 import { ProfessorService } from "./professor.service.js";
 import { ProfessorCreateUseCase } from "./useCases/professorCreate.useCase.js";
 import { ProfessorFindByIdUseCase } from "./useCases/professorFindById.useCase.js";
+import { ProfessorListUseCase } from "./useCases/professorList.useCase.js";
 
 @Controller("professor")
 export class ProfessorController {
@@ -19,6 +21,7 @@ export class ProfessorController {
     private readonly professorService: ProfessorService,
     private readonly professorCreateUseCase: ProfessorCreateUseCase,
     private readonly professorFindByIdUseCase: ProfessorFindByIdUseCase,
+    private readonly professorListUseCase: ProfessorListUseCase,
   ) {}
 
   @Post()
@@ -27,8 +30,11 @@ export class ProfessorController {
   }
 
   @Get()
-  findAll() {
-    return this.professorService.findAll();
+  findAll(@Query("page") page: string, @Query("pageSize") pageSize: string) {
+    return this.professorListUseCase.run({
+      page: Number(page),
+      pageSize: Number(pageSize),
+    });
   }
 
   @Get(":id")

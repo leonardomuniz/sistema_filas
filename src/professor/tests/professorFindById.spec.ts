@@ -56,5 +56,4 @@ describe("Professor Find By Id", () => {
     const response = await useCase.run(mockId);
     expect(response).toBe(null);
   });
-
 });
